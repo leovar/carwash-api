@@ -201,3 +201,7 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 carwashServiceAccountKey.json
+
+package-lock.json
+
+CLAUDE.md

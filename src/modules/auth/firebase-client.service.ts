@@ -23,9 +23,16 @@ export class FirebaseClientService {
     this.auth = getAuth(this.app);
   }
 
-  async signInWithEmailAndPassword(email: string, password: string): Promise<string> {
+  async signInWithEmailAndPassword(
+    email: string,
+    password: string,
+  ): Promise<string> {
     try {
-      const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        this.auth,
+        email,
+        password,
+      );
       const idToken = await userCredential.user.getIdToken();
       return idToken;
     } catch (error) {

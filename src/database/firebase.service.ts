@@ -8,7 +8,7 @@ import {
   validateFirebaseConfig,
   getFirebaseConfig,
   getEnvironmentConfig,
-  initializeFirebaseFromEnv
+  initializeFirebaseFromEnv,
 } from '../config/firebase.config';
 
 @Injectable()
@@ -26,10 +26,14 @@ export class FirebaseService implements OnModuleInit {
       const configType = getEnvironmentConfig();
 
       if (configType === 'env') {
-        this.logger.log('Initializing Firebase Admin SDK from environment variables');
+        this.logger.log(
+          'Initializing Firebase Admin SDK from environment variables',
+        );
         this.firebaseApp = initializeFirebaseFromEnv();
       } else {
-        this.logger.log('Initializing Firebase Admin SDK from service account file');
+        this.logger.log(
+          'Initializing Firebase Admin SDK from service account file',
+        );
         const firebaseConfig = getFirebaseConfig();
         validateFirebaseConfig(firebaseConfig);
         this.firebaseApp = initializeFirebaseAdmin(firebaseConfig);
@@ -51,7 +55,6 @@ export class FirebaseService implements OnModuleInit {
       this.logger.log(`Firebase Admin SDK initialized successfully`);
       this.logger.log(`Project ID: ${this.firebaseApp.options.projectId}`);
       this.logger.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-
     } catch (error) {
       this.logger.error('Failed to initialize Firebase Admin SDK', error);
       throw error;
@@ -115,7 +118,10 @@ export class FirebaseService implements OnModuleInit {
   // Métodos utilitarios para operaciones comunes
 
   // Crear un token personalizado para un usuario
-  async createCustomToken(uid: string, additionalClaims?: object): Promise<string> {
+  async createCustomToken(
+    uid: string,
+    additionalClaims?: object,
+  ): Promise<string> {
     try {
       return await this.auth.createCustomToken(uid, additionalClaims);
     } catch (error) {
@@ -135,7 +141,9 @@ export class FirebaseService implements OnModuleInit {
   }
 
   // Crear un usuario
-  async createUser(userData: admin.auth.CreateRequest): Promise<admin.auth.UserRecord> {
+  async createUser(
+    userData: admin.auth.CreateRequest,
+  ): Promise<admin.auth.UserRecord> {
     try {
       return await this.auth.createUser(userData);
     } catch (error) {
@@ -165,7 +173,10 @@ export class FirebaseService implements OnModuleInit {
   }
 
   // Actualizar un usuario
-  async updateUser(uid: string, userData: admin.auth.UpdateRequest): Promise<admin.auth.UserRecord> {
+  async updateUser(
+    uid: string,
+    userData: admin.auth.UpdateRequest,
+  ): Promise<admin.auth.UserRecord> {
     try {
       return await this.auth.updateUser(uid, userData);
     } catch (error) {
@@ -197,7 +208,9 @@ export class FirebaseService implements OnModuleInit {
   }
 
   // Método para ejecutar transacciones en Firestore
-  async runTransaction<T>(updateFunction: (transaction: admin.firestore.Transaction) => Promise<T>): Promise<T> {
+  async runTransaction<T>(
+    updateFunction: (transaction: admin.firestore.Transaction) => Promise<T>,
+  ): Promise<T> {
     try {
       return await this.firestore.runTransaction(updateFunction);
     } catch (error) {
@@ -211,7 +224,6 @@ export class FirebaseService implements OnModuleInit {
     return this.firestore.batch();
   }
 }
-
 
 // Esta es otra forma de hacer esta clase
 /*

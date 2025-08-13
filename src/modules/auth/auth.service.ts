@@ -19,19 +19,29 @@ export class AuthService {
 
     try {
       // Paso 1: Autenticar con Firebase Client SDK
-      const idToken = await this.firebaseClientService.signInWithEmailAndPassword(email, password);
+      const idToken =
+        await this.firebaseClientService.signInWithEmailAndPassword(
+          email,
+          password,
+        );
 
       // Paso 2: Verificar el token con Admin SDK
       const decodedToken = await this.firebaseService.verifyIdToken(idToken);
 
       // Paso 3: Obtener información del usuario
-      const userRecord = await this.firebaseService.getUserByUid(decodedToken.uid);
+      const userRecord = await this.firebaseService.getUserByUid(
+        decodedToken.uid,
+      );
 
       // Paso 4: Crear token personalizado (opcional)
-      const customToken = await this.firebaseService.createCustomToken(decodedToken.uid);
+      const customToken = await this.firebaseService.createCustomToken(
+        decodedToken.uid,
+      );
 
       // Paso 5: Obtener datos adicionales
-      const additionalUserData = await this.getUserAdditionalData(decodedToken.uid);
+      const additionalUserData = await this.getUserAdditionalData(
+        decodedToken.uid,
+      );
 
       const authResponse: AuthResponseDto = {
         uid: userRecord.uid,
@@ -41,11 +51,11 @@ export class AuthService {
         displayName: userRecord.displayName,
         photoURL: userRecord.photoURL,
         emailVerified: userRecord.emailVerified,
+        role: ['admin'],
         ...additionalUserData,
       };
 
       return authResponse;
-
     } catch (error) {
       this.logger.error(`Login failed for ${email}:`, error);
       throw new UnauthorizedException('Credenciales inválidas');
@@ -59,10 +69,14 @@ export class AuthService {
       const decodedToken = await this.firebaseService.verifyIdToken(idToken);
 
       // Obtener información del usuario
-      const userRecord = await this.firebaseService.getUserByUid(decodedToken.uid);
+      const userRecord = await this.firebaseService.getUserByUid(
+        decodedToken.uid,
+      );
 
       // Obtener datos adicionales
-      const additionalUserData = await this.getUserAdditionalData(decodedToken.uid);
+      const additionalUserData = await this.getUserAdditionalData(
+        decodedToken.uid,
+      );
 
       const authResponse: AuthResponseDto = {
         uid: userRecord.uid,
@@ -71,12 +85,12 @@ export class AuthService {
         displayName: userRecord.displayName,
         photoURL: userRecord.photoURL,
         emailVerified: userRecord.emailVerified,
+        role: ['admin'],
         ...additionalUserData,
       };
 
       this.logger.log(`User ${userRecord.email} authenticated with ID token`);
       return authResponse;
-
     } catch (error) {
       this.logger.error('Token verification failed:', error);
       throw new UnauthorizedException('Token inválido');
@@ -94,7 +108,10 @@ export class AuthService {
 
       return {};
     } catch (error) {
-      this.logger.warn(`Could not fetch additional data for user ${uid}:`, error);
+      this.logger.warn(
+        `Could not fetch additional data for user ${uid}:`,
+        error,
+      );
       return {};
     }
   }

@@ -17,14 +17,19 @@ export interface FirebaseAdminConfig {
 // Función para cargar las credenciales del service account
 const loadServiceAccount = (): ServiceAccount => {
   try {
-    const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH ||
+    const serviceAccountPath =
+      process.env.FIREBASE_SERVICE_ACCOUNT_PATH ||
       path.join(process.cwd(), 'carwashServiceAccountKey.json');
 
     if (!fs.existsSync(serviceAccountPath)) {
-      throw new Error(`Service account file not found at: ${serviceAccountPath}`);
+      throw new Error(
+        `Service account file not found at: ${serviceAccountPath}`,
+      );
     }
 
-    const serviceAccountRaw = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8')) as {
+    const serviceAccountRaw = JSON.parse(
+      fs.readFileSync(serviceAccountPath, 'utf8'),
+    ) as {
       project_id: string;
       private_key: string;
       client_email: string;
@@ -36,7 +41,9 @@ const loadServiceAccount = (): ServiceAccount => {
       clientEmail: serviceAccountRaw.client_email,
     } as ServiceAccount;
   } catch (error) {
-    throw new Error(`Failed to load Firebase service account: ${error.message}`);
+    throw new Error(
+      `Failed to load Firebase service account: ${error.message}`,
+    );
   }
 };
 
@@ -47,9 +54,21 @@ export const firebaseConfig = registerAs(
     const serviceAccount = loadServiceAccount();
 
     return {
-      projectId: serviceAccount.projectId ?? (() => { throw new Error('projectId is undefined'); })(),
-      privateKey: serviceAccount.privateKey ?? (() => { throw new Error('privateKey is undefined'); })(),
-      clientEmail: serviceAccount.clientEmail ?? (() => { throw new Error('clientEmail is undefined'); })(),
+      projectId:
+        serviceAccount.projectId ??
+        (() => {
+          throw new Error('projectId is undefined');
+        })(),
+      privateKey:
+        serviceAccount.privateKey ??
+        (() => {
+          throw new Error('privateKey is undefined');
+        })(),
+      clientEmail:
+        serviceAccount.clientEmail ??
+        (() => {
+          throw new Error('clientEmail is undefined');
+        })(),
       databaseURL:
         process.env.FIREBASE_DATABASE_URL ||
         `https://${serviceAccount.projectId}-default-rtdb.firebaseio.com/`,
@@ -119,7 +138,9 @@ export const validateFirebaseConfig = (config: FirebaseAdminConfig): void => {
 
   for (const field of requiredFields) {
     if (!config[field]) {
-      throw new Error(`Firebase Admin configuration missing required field: ${field}`);
+      throw new Error(
+        `Firebase Admin configuration missing required field: ${field}`,
+      );
     }
   }
 
@@ -128,7 +149,10 @@ export const validateFirebaseConfig = (config: FirebaseAdminConfig): void => {
     throw new Error('Invalid private key format');
   }
 
-  if (!config.clientEmail.includes('@') || !config.clientEmail.includes('.iam.gserviceaccount.com')) {
+  if (
+    !config.clientEmail.includes('@') ||
+    !config.clientEmail.includes('.iam.gserviceaccount.com')
+  ) {
     throw new Error('Invalid client email format');
   }
 };
@@ -136,7 +160,8 @@ export const validateFirebaseConfig = (config: FirebaseAdminConfig): void => {
 // Configuración para diferentes entornos
 export const getEnvironmentConfig = (): 'file' | 'env' => {
   const env = process.env.NODE_ENV || 'development';
-  const useFileCredentials = process.env.FIREBASE_USE_FILE_CREDENTIALS === 'true';
+  const useFileCredentials =
+    process.env.FIREBASE_USE_FILE_CREDENTIALS === 'true';
 
   // En desarrollo, usar archivo; en producción, usar variables de entorno
   if (env === 'production' || process.env.FIREBASE_PRIVATE_KEY) {

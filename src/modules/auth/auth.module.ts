@@ -6,11 +6,7 @@ import { FirebaseService } from '../../database/firebase.service';
 
 @Module({
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    FirebaseClientService,
-    FirebaseService,
-  ],
+  providers: [AuthService, FirebaseClientService, FirebaseService],
   exports: [AuthService],
 })
 export class AuthModule {}

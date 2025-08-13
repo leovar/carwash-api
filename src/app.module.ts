@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
+import { CompaniesModule } from './modules/companies/companies.module';
 import { FirebaseService } from './database/firebase.service';
 import { AuthModule } from './modules/auth/auth.module';
 
@@ -14,6 +15,7 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
     UsersModule,
     InvoicesModule,
+    CompaniesModule,
     AuthModule,
   ],
   controllers: [AppController],

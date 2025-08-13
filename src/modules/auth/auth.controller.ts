@@ -7,7 +7,7 @@ import {
   HttpStatus,
   UseGuards,
   Request,
-  Get
+  Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -25,7 +25,9 @@ export class AuthController {
 
   @Post('login-with-token')
   @HttpCode(HttpStatus.OK)
-  async loginWithToken(@Body('idToken') idToken: string): Promise<AuthResponseDto> {
+  async loginWithToken(
+    @Body('idToken') idToken: string,
+  ): Promise<AuthResponseDto> {
     return this.authService.loginWithIdToken(idToken);
   }
 

@@ -17,11 +17,10 @@ export class CompaniesService {
       const firestore = this.firebaseService.getFirestore();
       const now = new Date();
 
-      const companyData: Omit<Company, 'id'> = {
+      const companyData = {
         ...createCompanyDto,
         isActive: createCompanyDto.isActive ?? true,
-        creationDate: now,
-        endDate: now,
+        createdDate: now,
       };
 
       const docRef = await firestore
@@ -56,15 +55,20 @@ export class CompaniesService {
         } else {
           companies.push({
             id: doc.id,
-            companyName: data.companyName,
-            email: data.email,
-            phone: data.phone,
             address: data.address,
-            nit: data.nit,
-            description: data.description,
-            isActive: data.isActive,
+            city: data.city,
+            companyCode: data.companyCode,
+            companyName: data.companyName,
+            contactName: data.contactName,
+            country: data.country,
             creationDate: data.creationDate?.toDate() || new Date(),
-            endDate: data.endDate?.toDate() || new Date(),
+            description: data.description,
+            email: data.email,
+            isActive: data.isActive,
+            mainCompany: data.mainCompany,
+            nit: data.nit,
+            phone: data.phone,
+            region: data.region,
           });
         }
       });
@@ -95,15 +99,20 @@ export class CompaniesService {
       } else {
         return {
           id: doc.id,
-          companyName: data.companyName,
-          email: data.email,
-          phone: data.phone,
           address: data.address,
-          nit: data.nit,
-          description: data.description,
-          isActive: data.isActive,
+          city: data.city,
+          companyCode: data.companyCode,
+          companyName: data.companyName,
+          contactName: data.contactName,
+          country: data.country,
           creationDate: data.creationDate?.toDate() || new Date(),
-          endDate: data.endDate?.toDate() || new Date(),
+          description: data.description,
+          email: data.email,
+          isActive: data.isActive,
+          mainCompany: data.mainCompany,
+          nit: data.nit,
+          phone: data.phone,
+          region: data.region,
         };
       }
     } catch (error) {

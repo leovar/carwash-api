@@ -1,29 +1,55 @@
-import { IsString, IsEmail, IsOptional, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsOptional,
+  IsBoolean,
+  IsNumber,
+} from 'class-validator';
 
 export class CreateCompanyDto {
-  @IsString()
-  companyName: string;
-
-  @IsEmail()
-  email: string;
-
-  @IsString()
-  @IsOptional()
-  phone?: string;
-
   @IsString()
   @IsOptional()
   address?: string;
 
   @IsString()
+  city: string;
+
+  @IsNumber()
   @IsOptional()
-  nit?: string;
+  companyCode?: number;
+
+  @IsString()
+  companyName: string;
+
+  @IsString()
+  @IsOptional()
+  contactName?: string;
+
+  @IsString()
+  country: string;
 
   @IsString()
   @IsOptional()
   description?: string;
 
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
   @IsBoolean()
   @IsOptional()
   isActive?: boolean = true;
+
+  @IsString()
+  @IsOptional()
+  mainCompany?: string;
+
+  @IsString()
+  nit: string;
+
+  @IsString()
+  phone: string;
+
+  @IsString()
+  region: string;
 }

@@ -3,7 +3,6 @@ import { FirebaseService } from '../../database/firebase.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from './entities/company.entity';
-import { error } from 'console';
 
 @Injectable()
 export class CompaniesService {
@@ -11,6 +10,32 @@ export class CompaniesService {
   private readonly collectionName = 'companies';
 
   constructor(private readonly firebaseService: FirebaseService) {}
+
+  private mapFirestoreToCompany(
+    doc: FirebaseFirestore.DocumentSnapshot,
+  ): Company {
+    const data = doc.data();
+    if (!data) {
+      throw new Error('Document data is undefined');
+    }
+    return {
+      id: doc.id,
+      address: data.address,
+      city: data.city,
+      companyCode: data.companyCode,
+      companyName: data.companyName,
+      contactName: data.contactName,
+      country: data.country,
+      createdDate: data.createdDate?.toDate() || new Date(),
+      description: data.description,
+      email: data.email,
+      isActive: data.isActive,
+      mainCompany: data.mainCompany,
+      nit: data.nit,
+      phone: data.phone,
+      region: data.region,
+    };
+  }
 
   async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
     try {
@@ -47,30 +72,7 @@ export class CompaniesService {
       const companies: Company[] = [];
 
       snapshot.forEach((doc) => {
-        const data = doc.data();
-        if (!data) {
-          const errorMessage = 'No data to show';
-          this.logger.error(errorMessage);
-          throw new Error(errorMessage);
-        } else {
-          companies.push({
-            id: doc.id,
-            address: data.address,
-            city: data.city,
-            companyCode: data.companyCode,
-            companyName: data.companyName,
-            contactName: data.contactName,
-            country: data.country,
-            creationDate: data.creationDate?.toDate() || new Date(),
-            description: data.description,
-            email: data.email,
-            isActive: data.isActive,
-            mainCompany: data.mainCompany,
-            nit: data.nit,
-            phone: data.phone,
-            region: data.region,
-          });
-        }
+        companies.push(this.mapFirestoreToCompany(doc));
       });
 
       this.logger.log(`Retrieved ${companies.length} companies`);
@@ -91,30 +93,7 @@ export class CompaniesService {
         return null;
       }
 
-      const data = doc.data();
-      if (!data) {
-        const errorMessage = 'data is undefined';
-        this.logger.error(errorMessage);
-        throw new Error(errorMessage);
-      } else {
-        return {
-          id: doc.id,
-          address: data.address,
-          city: data.city,
-          companyCode: data.companyCode,
-          companyName: data.companyName,
-          contactName: data.contactName,
-          country: data.country,
-          creationDate: data.creationDate?.toDate() || new Date(),
-          description: data.description,
-          email: data.email,
-          isActive: data.isActive,
-          mainCompany: data.mainCompany,
-          nit: data.nit,
-          phone: data.phone,
-          region: data.region,
-        };
-      }
+      return this.mapFirestoreToCompany(doc);
     } catch (error) {
       this.logger.error(`Failed to retrieve company with ID ${id}`, error);
       throw error;

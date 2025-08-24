@@ -51,14 +51,58 @@ export class FirebaseAuthGuard implements CanActivate {
     } catch (error: any) {
       this.logger.error('Token verification failed', error);
 
-      if (error?.code === 'auth/id-token-expired') {
-        throw new UnauthorizedException('Token has expired');
-      } else if (error?.code === 'auth/id-token-revoked') {
-        throw new UnauthorizedException('Token has been revoked');
-      } else if (error?.code === 'auth/invalid-id-token') {
-        throw new UnauthorizedException('Invalid token');
+      // Handle specific Firebase auth errors
+      const errorCode = error?.code || error?.errorInfo?.code;
+      const errorMessage =
+        error?.message || error?.errorInfo?.message || 'Authentication failed';
+
+      if (
+        errorCode === 'auth/id-token-expired' ||
+        errorCode === 'auth/td-token-expired'
+      ) {
+        throw new UnauthorizedException({
+          message:
+            'Firebase ID token has expired. Get a fresh ID token from your client app and try again',
+          code: 'auth/id-token-expired',
+          codePrefix: 'auth',
+        });
+      } else if (errorCode === 'auth/id-token-revoked') {
+        throw new UnauthorizedException({
+          message: 'Token has been revoked',
+          code: 'auth/id-token-revoked',
+          codePrefix: 'auth',
+        });
+      } else if (errorCode === 'auth/invalid-id-token') {
+        throw new UnauthorizedException({
+          message: 'Invalid token format or signature',
+          code: 'auth/invalid-id-token',
+          codePrefix: 'auth',
+        });
+      } else if (errorCode === 'auth/project-not-found') {
+        throw new UnauthorizedException({
+          message: 'Firebase project not found',
+          code: 'auth/project-not-found',
+          codePrefix: 'auth',
+        });
+      } else if (errorCode === 'auth/user-not-found') {
+        throw new UnauthorizedException({
+          message: 'User not found',
+          code: 'auth/user-not-found',
+          codePrefix: 'auth',
+        });
       } else {
-        throw new UnauthorizedException('Authentication failed');
+        // Log the full error for debugging
+        this.logger.error('Unhandled authentication error:', {
+          code: errorCode,
+          message: errorMessage,
+          fullError: error,
+        });
+
+        throw new UnauthorizedException({
+          message: 'Authentication failed',
+          code: errorCode || 'auth/unknown-error',
+          codePrefix: 'auth',
+        });
       }
     }
   }

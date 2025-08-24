@@ -46,6 +46,7 @@ export class CompaniesService {
         ...createCompanyDto,
         isActive: createCompanyDto.isActive ?? true,
         createdDate: now,
+        companyCode: 1,
       };
 
       const docRef = await firestore

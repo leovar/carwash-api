@@ -3,7 +3,6 @@ import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as admin from 'firebase-admin';
 import {
-  FirebaseAdminConfig,
   initializeFirebaseAdmin,
   validateFirebaseConfig,
   getFirebaseConfig,
@@ -134,8 +133,18 @@ export class FirebaseService implements OnModuleInit {
   async verifyIdToken(idToken: string): Promise<admin.auth.DecodedIdToken> {
     try {
       return await this.auth.verifyIdToken(idToken);
-    } catch (error) {
-      this.logger.error('Failed to verify ID token', error);
+    } catch (error: any) {
+      // Log detailed error information for debugging
+      const errorCode = error?.code || error?.errorInfo?.code;
+      const errorMessage = error?.message || error?.errorInfo?.message;
+
+      this.logger.error('Failed to verify ID token', {
+        code: errorCode,
+        message: errorMessage,
+        tokenPrefix: idToken?.substring(0, 20) + '...',
+      });
+
+      // Re-throw the original error to maintain Firebase error structure
       throw error;
     }
   }
